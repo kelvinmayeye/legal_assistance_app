@@ -57,7 +57,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void sendLogin() {
-        Toast.makeText(this,"send", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this,UserActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void alertFail(String s) {
