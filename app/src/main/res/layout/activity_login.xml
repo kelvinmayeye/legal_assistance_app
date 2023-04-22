@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:paddingHorizontal="58dp"
+    android:paddingHorizontal="48dp"
     tools:context=".LoginActivity">
 
     <EditText
