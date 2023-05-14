@@ -5,14 +5,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class RegisterActivity extends AppCompatActivity {
     EditText etFirstName,etLastName,etEmail,etPassword,etPhonenumber,etConfirmation;
     Button btnRegister;
-    String firstname,lastname,email,password,confirmation;
+    String firstname,lastname,email,password,confirmation,phonenumber;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getSupportActionBar().setTitle("Register account");
@@ -44,6 +50,7 @@ public class RegisterActivity extends AppCompatActivity {
         email = etEmail.getText().toString();
         password = etPassword.getText().toString();
         confirmation = etConfirmation.getText().toString();
+        phonenumber = etPhonenumber.getText().toString();
         if (firstname.isEmpty() || lastname.isEmpty() || email.isEmpty() || password.isEmpty()){
             alertFail("names,email and password are required");
         }else if(!password.equals(confirmation)){
@@ -54,7 +61,55 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void sendRegister() {
-        alertSuccess("Register successfully");
+        JSONObject params = new JSONObject();
+        try {
+            params.put("firstname",firstname);
+            params.put("lastname",lastname);
+            params.put("email",email);
+            params.put("password",password);
+            params.put("password_confirmation",confirmation);
+            params.put("phonenumber",phonenumber);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        String data = params.toString();
+
+
+        String url = getString(R.string.api_server)+"/register";
+        Log.i("send to",url);
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Http http = new Http(RegisterActivity.this,url);
+                http.setMethod("post");
+                http.setData(data);
+                http.send();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Integer code = http.getStatusCode();
+                        if (code == 201 || code == 200){
+                            alertSuccess("Register Successfuly");
+                        } else if( code == 422) {
+                            try {
+                                JSONObject response = new JSONObject(http.getResponce());
+                                String msg = response.getString("message");
+                                alertFail(msg);
+                            } catch (JSONException e){
+                                e.printStackTrace();
+                            }
+                        }
+                        else {
+                            Toast.makeText(RegisterActivity.this,"Error "+code+" Ooops!", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+            }
+        }).start();
+
     }
 
     private void alertSuccess(String s) {

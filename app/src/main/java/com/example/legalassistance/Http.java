@@ -1,22 +1,24 @@
 package com.example.legalassistance;
 
 import android.content.Context;
+import android.util.Log;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class Http {
     Context context;
-    private String url,method ="GET",data=null, responce=null;
+    private String url,method ="POST",data=null, responce=null;
     private Integer statusCode = 0;
     private Boolean token = false;
     private LocalStorage localStorage;
+
 
     public Http(Context context, String url) {
         this.context = context;
@@ -36,8 +38,9 @@ public class Http {
         return data;
     }
 
-    public void setData(String data) {
+    public String setData(String data) {
         this.data = data;
+        return data;
     }
 
     public Boolean getToken() {
@@ -61,17 +64,19 @@ public class Http {
             URL sUrl = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) sUrl.openConnection();
             connection.setRequestMethod(method);
-            connection.setRequestProperty("Context-Type","application/json");
             connection.setRequestProperty("X-Requested-With","XMLHttpRequest");
+            connection.setRequestProperty("Context-Type", "application/json");
             if (token){
                 connection.setRequestProperty("Authorization","Bearer"+localStorage.getToken());
             }
+            connection.setDoOutput(true);
             if(! method.equals("GET")){
                 connection.setDoOutput(true);
             }
-            if (data != null){
+            if (getData() != null) {
+                connection.setRequestProperty("Content-Type", "application/json");
                 OutputStream os = connection.getOutputStream();
-                os.write(data.getBytes());
+                os.write(getData().getBytes("UTF-8"));
                 os.flush();
                 os.close();
             }
@@ -92,6 +97,8 @@ public class Http {
             }
             br.close();
             responce = sb.toString();
+
+            Log.w("responce :",responce);
         } catch (IOException e){
             e.printStackTrace();
         }
