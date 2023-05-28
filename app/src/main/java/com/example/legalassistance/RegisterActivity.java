@@ -95,7 +95,7 @@ public class RegisterActivity extends AppCompatActivity {
                             alertSuccess("Register Successfuly");
                         } else if( code == 422) {
                             try {
-                                JSONObject response = new JSONObject(http.getResponce());
+                                JSONObject response = new JSONObject(http.getResponse());
                                 String msg = response.getString("message");
                                 alertFail(msg);
                             } catch (JSONException e){

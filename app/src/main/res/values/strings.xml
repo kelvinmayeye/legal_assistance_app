@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">legalAssistance</string>
-    <string name="api_server">http://192.168.43.20/api/public/api</string>
+    <string name="api_server">http://192.168.43.81/api/public/api</string>
 </resources>

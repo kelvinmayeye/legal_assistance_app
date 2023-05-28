@@ -4,17 +4,15 @@ import android.content.Context;
 import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class Http {
     Context context;
-    private String url,method ="POST",data=null, responce=null;
+    private String url,method ="POST",data=null, response=null;
     private Integer statusCode = 0;
     private Boolean token = false;
     private LocalStorage localStorage;
@@ -51,9 +49,10 @@ public class Http {
         this.token = token;
     }
 
-    public String getResponce() {
-        return responce;
+    public String getResponse() {
+        return response;
     }
+
 
     public Integer getStatusCode() {
         return statusCode;
@@ -65,10 +64,12 @@ public class Http {
             HttpURLConnection connection = (HttpURLConnection) sUrl.openConnection();
             connection.setRequestMethod(method);
             connection.setRequestProperty("X-Requested-With","XMLHttpRequest");
-            connection.setRequestProperty("Context-Type", "application/json");
-            if (token){
-                connection.setRequestProperty("Authorization","Bearer"+localStorage.getToken());
+            connection.setRequestProperty("Content-Type", "application/json");
+            if (getToken()){
+                connection.setRequestProperty("Authorization", "Bearer " + localStorage.getToken());
+                Log.d("Token from localstorage:", localStorage.getToken()); // Print the token value to logs
             }
+
             connection.setDoOutput(true);
             if(! method.equals("GET")){
                 connection.setDoOutput(true);
@@ -96,9 +97,9 @@ public class Http {
                 sb.append(line);
             }
             br.close();
-            responce = sb.toString();
+            response = sb.toString();
 
-            Log.w("responce :",responce);
+            Log.w("response from api :",response);
         } catch (IOException e){
             e.printStackTrace();
         }

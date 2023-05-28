@@ -8,7 +8,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,8 +15,6 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.jar.JarException;
 
 public class LoginActivity extends AppCompatActivity {
     EditText etEmail,etPassword;
@@ -92,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                         Integer code = http.getStatusCode();
                         if (code == 200){
                             try {
-                                JSONObject response = new JSONObject(http.getResponce());
+                                JSONObject response = new JSONObject(http.getResponse());
                                 String token = response.getString("token");
                                 localStorage.setToken(token);
                                 Intent intent = new Intent(LoginActivity.this,UserActivity.class);
@@ -104,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         else if (code == 422){
                             try {
-                                JSONObject response = new JSONObject(http.getResponce());
+                                JSONObject response = new JSONObject(http.getResponse());
                                 String msg = response.getString("message");
                                 alertFail(msg);
                             } catch (JSONException e) {
@@ -113,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         else if (code == 401){
                             try {
-                                JSONObject response = new JSONObject(http.getResponce());
+                                JSONObject response = new JSONObject(http.getResponse());
                                 String msg = response.getString("message");
                                 alertFail(msg);
                             } catch (JSONException e){
